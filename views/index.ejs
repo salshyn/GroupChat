@@ -1,0 +1,68 @@
+<html>
+<head>
+<title></title>
+    <style type="text/css">
+        *{
+            margin:0px;
+            padding:0px;
+        }
+        body {
+            width: 700px;
+            margin: 0 auto;
+        }
+        #chatboard {
+            height: 500px;
+            width: 400px;
+            background-color: #FFF4DF;
+            vertical-align: top;
+            display: block;
+            margin: 10px;
+        }
+        #sms {
+            margin: 10px;
+            width: 381px;
+        }
+    </style>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script type ="text/javascript" src="/socket.io/socket.io.js"></script>
+    <script type ="text/javascript">
+        $(document).ready(function (){
+            var person = prompt("Please enter your name", "");
+            var socket = io.connect();         
+
+            $('#smsform').submit(function(){
+                console.log(person + "    " + $('#sms').val());
+                socket.emit('sms_submitted', {name: person, sms: $('#sms').val()});
+                return false;
+            });
+
+            socket.on('new_message', function(data){
+                $('#chatboard').empty();
+                console.log('is on new_message now finally');
+                for (var i in data.messages) {
+                    $('#chatboard').append(data.users[i] + ": "+ data.messages[i] + "<br>");
+                }
+            });
+            
+        });
+    </script>
+</head>
+<body>
+    <div id="main">
+        <div>
+            <p>Conversation Board</p>
+        </div>
+        <div id="chatboard">
+            <% for (var i in messages) { %>
+            <p><%= users[i] + ": "+ messages[i] %></p>
+            <% } %>
+        </div>
+        <div id="smsi">
+            <form id="smsform">
+                <input type="text" id="sms">
+                <input type="submit" value="Send Message">
+            </form>
+        </div>
+    </div>
+</body>
+</html><br>
